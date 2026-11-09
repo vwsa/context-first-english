@@ -1,0 +1,21 @@
+{
+  "name": "context-first-english",
+  "displayName": "Context First",
+  "description": "将选中的英文与邻近原文发送到本机 Context First 桌面浮窗。",
+  "version": "0.1.0",
+  "publisher": "context-first-local",
+  "engines": {"vscode": "^1.90.0"},
+  "categories": ["Other"],
+  "extensionKind": ["ui"],
+  "main": "./dist/extension.cjs",
+  "activationEvents": ["onCommand:contextFirst.explainSelection", "onCommand:contextFirst.connect"],
+  "capabilities": {"untrustedWorkspaces": {"supported": true}, "virtualWorkspaces": {"supported": true}},
+  "contributes": {
+    "commands": [
+      {"command": "contextFirst.explainSelection", "title": "解释选中文本", "category": "Context First"},
+      {"command": "contextFirst.connect", "title": "连接桌面应用", "category": "Context First"}
+    ],
+    "keybindings": [{"command": "contextFirst.explainSelection", "key": "alt+shift+d", "when": "editorTextFocus && editorHasSelection"}],
+    "menus": {"editor/context": [{"command": "contextFirst.explainSelection", "when": "editorHasSelection", "group": "navigation@9"}]}
+  }
+}

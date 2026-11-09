@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Context First — 划词解释",
+  "version": "0.1.0",
+  "description": "将主动选中的网页文本及邻近原文交给本机 Context First 桌面应用。",
+  "minimum_chrome_version": "120",
+  "permissions": ["activeTab", "scripting", "storage", "contextMenus"],
+  "host_permissions": ["http://127.0.0.1/*"],
+  "background": {"service_worker": "background.js"},
+  "action": {"default_title": "解释选中文本 · Alt+Shift+D"},
+  "options_page": "options.html",
+  "commands": {
+    "explain-selection": {
+      "suggested_key": {"default": "Alt+Shift+D"},
+      "description": "在 Context First 中解释选中文本"
+    }
+  }
+}

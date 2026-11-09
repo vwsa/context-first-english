@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>连接 Context First</title><link rel="stylesheet" href="options.css"></head>
+<body><main><div class="eyebrow">CONTEXT FIRST</div><h1>连接桌面应用</h1>
+<p>打开桌面应用的设置，将连接码粘贴到这里。连接成功后，在网页正文中选词，按 <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd>。</p>
+<form id="connection-form"><label for="token">连接码</label><input id="token" type="password" autocomplete="off" spellcheck="false" required minlength="16">
+<label for="port">端口</label><input id="port" type="number" value="37719" min="1024" max="65535" required>
+<button type="submit">保存并检查连接</button></form><p id="status" role="status" aria-live="polite"></p>
+<p class="note">也可以在选词后点击工具栏图标，或使用右键菜单。快捷键可在浏览器的扩展快捷键设置中修改。</p>
+</main><script src="options.js"></script></body></html>
