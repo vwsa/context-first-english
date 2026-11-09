@@ -1,0 +1,77 @@
+import {_electron as electron} from 'playwright';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {fileURLToPath} from 'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const dataDir=path.join(root,'.test-data',`desktop-${process.platform}-${Date.now()}`);
+await fs.mkdir(dataDir,{recursive:true});await fs.mkdir(path.join(root,'test-results'),{recursive:true});
+const options={chromiumSandbox:true,args:[root,'--smoke-test'],env:{...process.env,CONTEXT_FIRST_TEST:'1',CONTEXT_FIRST_DATA:dataDir,CONTEXT_FIRST_PORT:'0'}};
+if(process.env.CONTEXT_FIRST_ELECTRON)options.executablePath=process.env.CONTEXT_FIRST_ELECTRON;
+let app=await electron.launch(options);
+const errors=[];
+async function attach(){const page=await app.firstWindow();page.on('pageerror',e=>errors.push(e.message));await page.getByRole('button',{name:'设置',exact:true}).waitFor();return page;}
+let page=await attach();
+try{
+  const state=await page.evaluate(()=>window.desktop.getState());
+  const capture=JSON.parse(await fs.readFile(path.join(root,'schemas/examples/saved-entry.v0.1.json'),'utf8')).capture;
+  capture.id=randomUUID();
+  const response=await fetch(`http://127.0.0.1:${state.connection.port}/capture`,{method:'POST',headers:{Authorization:`Bearer ${state.connection.token}`,'Content-Type':'application/json'},body:JSON.stringify(capture)});
+  assert.equal(response.status,202);
+  await page.getByRole('heading',{name:'bank',exact:true}).waitFor();
+  await page.getByText('河岸',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'收藏',exact:true}).click();
+  await page.getByRole('button',{name:'取消收藏',exact:true}).waitFor();
+  await page.getByRole('button',{name:'继续讨论…',exact:true}).click();
+  await page.getByRole('textbox',{name:'继续追问'}).pressSequentially('为什么是河岸？',{delay:10});
+  await page.getByRole('button',{name:'收起讨论',exact:true}).click();
+  await page.getByRole('button',{name:'继续讨论…',exact:true}).click();
+  assert.equal(await page.getByRole('textbox',{name:'继续追问'}).inputValue(),'为什么是河岸？');
+  await page.getByRole('button',{name:'发送',exact:true}).click();
+  await page.getByText('结合原句，这里的表达描述当前语境中的含义。',{exact:true}).waitFor();
+  await page.waitForFunction(()=>{const main=document.querySelector('main');return main.scrollHeight<=main.clientHeight+1;});
+  await page.waitForTimeout(200); // Native window resizing may repaint after the DOM has settled.
+  await page.screenshot({path:path.join(root,`test-results/desktop-${process.platform}.png`)});
+  await page.getByRole('button',{name:'查看收藏'}).click();
+  await page.getByText('1 条语境',{exact:true}).waitFor();
+  await page.locator('.entry>button').first().click();
+  await page.getByRole('heading',{name:'bank',exact:true}).waitFor();
+  await app.close();
+  app=await electron.launch(options);page=await attach();
+  await page.getByRole('button',{name:'查看收藏'}).click();
+  await page.getByText('1 条语境',{exact:true}).waitFor();
+  await page.locator('.entry>button').first().click();
+  await page.getByText('结合原句，这里的表达描述当前语境中的含义。',{exact:true}).waitFor();
+  await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].setSize(350,430));
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true,'No horizontal overflow at small width');
+  await page.screenshot({path:path.join(root,`test-results/desktop-${process.platform}-small.png`)});
+  assert.equal(await page.getByRole('button',{name:'展开译文',exact:true}).count(),0,'Short translations have no expand control');
+  async function selectWord(word){
+    const current=await page.evaluate(()=>window.desktop.getState());
+    const next=structuredClone(capture);next.id=randomUUID();next.capturedAt=new Date().toISOString();next.selectedText=word;
+    next.context={text:`A ${word} example.`,selectionStart:2,selectionEnd:2+word.length,coverage:'excerpt',sentenceRange:{start:0,end:word.length+11}};
+    const response=await fetch(`http://127.0.0.1:${current.connection.port}/capture`,{method:'POST',headers:{Authorization:`Bearer ${current.connection.token}`,'Content-Type':'application/json'},body:JSON.stringify(next)});
+    assert.equal(response.status,202);await page.getByRole('heading',{name:word,exact:true}).waitFor();
+  }
+  await selectWord('long');
+  const translation=page.getByRole('button',{name:'展开译文',exact:true}),context=page.getByRole('button',{name:'展开Context',exact:true});
+  await translation.waitFor();await context.waitFor();await translation.click();
+  assert.equal(await context.getAttribute('aria-expanded'),'false','Context stays folded when translation expands');
+  await context.click();
+  await page.getByRole('button',{name:'收起译文',exact:true}).waitFor();
+  await page.waitForFunction(()=>{const main=document.querySelector('main');return main.scrollHeight>main.clientHeight&&document.querySelector('header').getBoundingClientRect().top>=0;});
+  await page.screenshot({path:path.join(root,`test-results/desktop-${process.platform}-long.png`)});
+  await page.getByRole('button',{name:'收起译文',exact:true}).click();
+  assert.equal(await page.getByRole('button',{name:'收起Context',exact:true}).getAttribute('aria-expanded'),'true');
+  await selectWord('retry');
+  await page.getByText('模拟连接暂时中断',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'重试',exact:true}).click();
+  await page.getByText('超出预定范围',{exact:true}).waitFor();
+  await selectWord('slow');
+  await page.getByRole('button',{name:'停止',exact:true}).click();
+  await page.getByText('解释已取消，可以重试',{exact:true}).waitFor();
+  assert.equal((await page.evaluate(()=>window.desktop.getState())).session.explanation,null);
+  assert.deepEqual(errors,[]);
+  console.log(JSON.stringify({platform:process.platform,bridge:true,explanation:'mock',discussion:true,draftRetention:true,persistenceAcrossRestart:true,narrowWindow:true,independentFolds:true,internalScroll:true,errorRetry:true,cancel:true,errors,dataDir},null,2));
+}finally{await app.close();}

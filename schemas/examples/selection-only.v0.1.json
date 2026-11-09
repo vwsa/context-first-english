@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "0.1",
+  "id": "62e57fbb-7834-4d21-b6f6-4b9aab630226",
+  "capture": {
+    "id": "dff72627-f67f-4a3a-866e-27152c299f3a",
+    "capturedAt": "2026-11-04T02:00:00Z",
+    "selectedText": "run",
+    "context": {
+      "text": "run",
+      "selectionStart": 0,
+      "selectionEnd": 3,
+      "coverage": "selection-only",
+      "sentenceRange": null
+    },
+    "source": {
+      "kind": "browser",
+      "title": null,
+      "url": null,
+      "documentUri": null,
+      "languageId": null,
+      "lineStart": null,
+      "lineEnd": null
+    }
+  },
+  "explanation": null,
+  "conversation": [],
+  "savedAt": "2026-11-04T02:00:02Z",
+  "updatedAt": "2026-11-04T02:00:02Z"
+}

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "0.1",
+  "id": "fb38ebdc-fc6b-4f77-8540-6795df64bfc9",
+  "capture": {
+    "id": "ef42c583-b64a-4ae0-b586-6c8e08b06e43",
+    "capturedAt": "2026-11-04T02:00:00Z",
+    "selectedText": "break the ice",
+    "context": {
+      "text": "📘 We decided to break the ice before the meeting.",
+      "selectionStart": 17,
+      "selectionEnd": 30,
+      "coverage": "excerpt",
+      "sentenceRange": {
+        "start": 3,
+        "end": 50
+      }
+    },
+    "source": {
+      "kind": "vscode",
+      "title": "meeting.md",
+      "url": null,
+      "documentUri": "file:///home/user/notes/meeting.md",
+      "languageId": "markdown",
+      "lineStart": 8,
+      "lineEnd": 8
+    }
+  },
+  "explanation": {
+    "meaning": "打破僵局，让交流轻松起来",
+    "sentenceTranslation": "我们决定在会议开始前先活跃一下气氛。",
+    "contextNote": "结合会议前的场景，这里使用的是 break the ice 的比喻义。",
+    "limitations": [],
+    "provider": "fixture",
+    "model": null,
+    "generatedAt": "2026-11-04T02:00:01Z"
+  },
+  "conversation": [
+    {
+      "id": "fbf0b314-c7a0-493c-8ca7-823f58ae4e04",
+      "role": "user",
+      "text": "这个表达还适用于哪些场合？",
+      "createdAt": "2026-11-04T02:00:03Z"
+    }
+  ],
+  "savedAt": "2026-11-04T02:00:02Z",
+  "updatedAt": "2026-11-04T02:00:03Z"
+}

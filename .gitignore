@@ -1,0 +1,10 @@
+# Local operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+node_modules/
+dist/
+release/
+.test-data/
+test-results/
+*.log

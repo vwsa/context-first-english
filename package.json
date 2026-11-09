@@ -1,0 +1,57 @@
+{
+  "name": "context-first-english",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Context-first English learning for Windows and Linux",
+  "main": "dist/main.cjs",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "npm run build && electron .",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "test:e2e": "npm run build && node scripts/smoke.mjs",
+    "test:live": "npm run build && node scripts/live-smoke.mjs",
+    "package": "npm run build && electron-builder --dir --config.electronDist=node_modules/electron/dist"
+  },
+  "dependencies": {
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/vscode": "^1.144.0",
+    "electron": "45.2.2",
+    "electron-builder": "^26.0.0",
+    "esbuild": "^0.25.0",
+    "playwright": "^1.58.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.9.0"
+  },
+  "build": {
+    "appId": "local.contextfirst.english",
+    "productName": "Context First",
+    "files": [
+      "dist/**",
+      "schemas/*.json",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": "portable",
+      "signAndEditExecutable": false
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "dir"
+      ],
+      "category": "Education"
+    }
+  }
+}

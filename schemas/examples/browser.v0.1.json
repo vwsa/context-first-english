@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "0.1",
+  "id": "c406ac03-e987-4bde-9747-639d30e8a6c0",
+  "capture": {
+    "id": "77c8a5f4-a96e-4678-b447-a2691cdf83d9",
+    "capturedAt": "2026-11-04T02:00:00Z",
+    "selectedText": "bank",
+    "context": {
+      "text": "The bank approved my loan.",
+      "selectionStart": 4,
+      "selectionEnd": 8,
+      "coverage": "excerpt",
+      "sentenceRange": {
+        "start": 0,
+        "end": 26
+      }
+    },
+    "source": {
+      "kind": "browser",
+      "title": "Example reading passage",
+      "url": "https://example.org/reading/bank",
+      "documentUri": null,
+      "languageId": null,
+      "lineStart": null,
+      "lineEnd": null
+    }
+  },
+  "explanation": {
+    "meaning": "银行",
+    "sentenceTranslation": "银行批准了我的贷款。",
+    "contextNote": "approved my loan 表示批准贷款，因此这里的 bank 指银行。",
+    "limitations": [],
+    "provider": "fixture",
+    "model": null,
+    "generatedAt": "2026-11-04T02:00:01Z"
+  },
+  "conversation": [],
+  "savedAt": "2026-11-04T02:00:02Z",
+  "updatedAt": "2026-11-04T02:00:02Z"
+}

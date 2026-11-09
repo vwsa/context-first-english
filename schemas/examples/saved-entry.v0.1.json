@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "0.1",
+  "id": "70fbab41-9d22-47a8-b45a-93ff4f3d033e",
+  "capture": {
+    "id": "7746a225-c064-42b0-bb4f-279b8720617b",
+    "capturedAt": "2026-11-04T02:00:00Z",
+    "selectedText": "bank",
+    "context": {
+      "text": "We sat on the bank of the river.",
+      "selectionStart": 14,
+      "selectionEnd": 18,
+      "coverage": "excerpt",
+      "sentenceRange": { "start": 0, "end": 31 }
+    },
+    "source": {
+      "kind": "vscode",
+      "title": "example.md",
+      "url": null,
+      "documentUri": "file:///E:/notes/example.md",
+      "languageId": "markdown",
+      "lineStart": 1,
+      "lineEnd": 1
+    }
+  },
+  "explanation": {
+    "meaning": "河岸",
+    "sentenceTranslation": "我们坐在河岸上。",
+    "contextNote": "of the river 表明这里的 bank 指河岸。",
+    "limitations": [],
+    "provider": "fixture",
+    "model": null,
+    "generatedAt": "2026-11-04T02:00:01Z"
+  },
+  "conversation": [
+    {
+      "id": "3d049bbb-31d2-4195-aae0-e1ed8adc0173",
+      "role": "user",
+      "text": "这里为什么不是银行？",
+      "createdAt": "2026-11-04T02:00:03Z"
+    },
+    {
+      "id": "a3b80ec7-1781-48f9-8e02-e63e83fae063",
+      "role": "assistant",
+      "text": "这里的 of the river 指明了它是河的一部分，因此 bank 在这句中表示河岸。",
+      "createdAt": "2026-11-04T02:00:04Z"
+    }
+  ],
+  "savedAt": "2026-11-04T02:00:02Z",
+  "updatedAt": "2026-11-04T02:00:04Z"
+}

@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:context-first-english:saved-entry:0.1",
+  "title": "Saved Entry v0.1 — draft for review",
+  "description": "Draft personal collection format: one immutable capture and its saved explanation and conversation. Load explanation-result.v0.1.schema.json into the validator alongside this schema. See schemas/README.md for lifecycle and application-level invariants.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "capture", "explanation", "conversation", "savedAt", "updatedAt"],
+  "properties": {
+    "schemaVersion": { "const": "0.1" },
+    "id": { "type": "string", "format": "uuid" },
+    "capture": { "$ref": "#/$defs/capture" },
+    "explanation": { "anyOf": [{ "$ref": "#/$defs/explanation" }, { "type": "null" }] },
+    "conversation": { "type": "array", "items": { "$ref": "#/$defs/message" } },
+    "savedAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "nullableString": { "type": ["string", "null"] },
+    "capture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "capturedAt", "selectedText", "context", "source"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "capturedAt": { "type": "string", "format": "date-time" },
+        "selectedText": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "context": { "$ref": "#/$defs/context" },
+        "source": { "$ref": "#/$defs/source" }
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "selectionStart", "selectionEnd", "coverage", "sentenceRange"],
+      "properties": {
+        "text": { "type": "string", "minLength": 1 },
+        "selectionStart": { "type": "integer", "minimum": 0, "description": "Zero-based UTF-16 code unit offset in text, inclusive." },
+        "selectionEnd": { "type": "integer", "minimum": 1, "description": "UTF-16 code unit offset in text, exclusive. Application validates range and selectedText equality." },
+        "coverage": { "enum": ["selection-only", "excerpt"], "description": "Whether text contains only the selection or additional captured surrounding text." },
+        "sentenceRange": { "anyOf": [{ "$ref": "#/$defs/textRange" }, { "type": "null" }], "description": "Exact original sentence range within text, containing the selection; null when unknown. Never model-generated." }
+      }
+    },
+    "textRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "type": "integer", "minimum": 0, "description": "Inclusive UTF-16 code unit offset." },
+        "end": { "type": "integer", "minimum": 1, "description": "Exclusive UTF-16 code unit offset." }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "title", "url", "documentUri", "languageId", "lineStart", "lineEnd"],
+      "properties": {
+        "kind": { "enum": ["browser", "vscode"] },
+        "title": { "$ref": "#/$defs/nullableString" },
+        "url": { "anyOf": [{ "type": "string", "format": "uri", "pattern": "^https?://" }, { "type": "null" }] },
+        "documentUri": { "anyOf": [{ "type": "string", "format": "uri" }, { "type": "null" }] },
+        "languageId": { "$ref": "#/$defs/nullableString" },
+        "lineStart": { "type": ["integer", "null"], "minimum": 1, "description": "One-based source line number when available." },
+        "lineEnd": { "type": ["integer", "null"], "minimum": 1, "description": "Last source line containing selected characters, inclusive." }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "browser" } } },
+          "then": {
+            "properties": {
+              "documentUri": { "type": "null" },
+              "languageId": { "type": "null" },
+              "lineStart": { "type": "null" },
+              "lineEnd": { "type": "null" }
+            }
+          },
+          "else": { "properties": { "url": { "type": "null" } } }
+        },
+        {
+          "if": { "properties": { "lineStart": { "type": "null" } } },
+          "then": { "properties": { "lineEnd": { "type": "null" } } },
+          "else": { "properties": { "lineEnd": { "type": "integer" } } }
+        }
+      ]
+    },
+    "explanation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["meaning", "sentenceTranslation", "contextNote", "limitations", "provider", "model", "generatedAt"],
+      "properties": {
+        "meaning": { "$ref": "urn:context-first-english:explanation-result:0.1#/properties/meaning" },
+        "sentenceTranslation": { "$ref": "urn:context-first-english:explanation-result:0.1#/properties/sentenceTranslation" },
+        "contextNote": { "$ref": "urn:context-first-english:explanation-result:0.1#/properties/contextNote" },
+        "limitations": { "$ref": "urn:context-first-english:explanation-result:0.1#/properties/limitations" },
+        "provider": { "type": "string", "minLength": 1, "description": "Provider identifier supplied by the host application." },
+        "model": { "$ref": "#/$defs/nullableString" },
+        "generatedAt": { "type": "string", "format": "date-time", "description": "Timestamp supplied by the host application." }
+      }
+    },
+    "message": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "role", "text", "createdAt"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "role": { "enum": ["user", "assistant"] },
+        "text": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

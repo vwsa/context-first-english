@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:context-first-english:explanation-result:0.1",
+  "title": "Explanation Result v0.1 — draft for review",
+  "description": "Only model-authored fields for an English-to-Chinese contextual explanation. The application owns capture, source, IDs, provider metadata and timestamps. Provider-specific structured-output compatibility still requires integration testing.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["meaning", "sentenceTranslation", "contextNote", "limitations"],
+  "properties": {
+    "meaning": { "type": "string", "minLength": 1, "pattern": "\\S", "description": "Concise Chinese meaning supported by the supplied context; state ambiguity when necessary." },
+    "sentenceTranslation": { "type": ["string", "null"], "minLength": 1, "pattern": "\\S", "description": "Chinese translation of the captured sentence derived from sentenceRange. Must be null when sentenceRange is null." },
+    "contextNote": { "type": "string", "description": "Brief Chinese explanation grounded in captured text. May be empty when no useful explanation is supported." },
+    "limitations": { "type": "array", "items": { "type": "string", "minLength": 1, "pattern": "\\S" }, "description": "Material ambiguity or missing-context limitations; empty when none need to be stated." }
+  }
+}
